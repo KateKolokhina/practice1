@@ -1,14 +1,7 @@
 package ua.goptsii;
 
-import com.github.snksoft.crc.CRC;
 import com.google.common.primitives.UnsignedLong;
 
-import javax.crypto.*;
-import javax.crypto.spec.SecretKeySpec;
-import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 public class Test {
@@ -17,11 +10,13 @@ public class Test {
 
         UnsignedLong k  = UnsignedLong.valueOf(478697);
         Message bMsq = new Message(10, 1, "test");
-        Packet p = new Packet((byte) 123, k, bMsq.getMessageBytesLength(), bMsq);
+
+        Packet p = new Packet((byte) 123, k, bMsq);
         System.out.println(Arrays.toString(p.toPacket()));
+
         byte [] packet= {19,
                 123,
-                0, 0, 0, 0, 0, 7, 77, -23, 0, 0, 0, 12, -89, -109, 0, 0, 0, 10, 0, 0, 0, 1, 94, -68, -6, -12, 95, 99, -46, -42, -96, 55, -36, 28, 117, -40, 107, 9, 47, -122};
+                0, 0, 0, 0, 0, 7, 77, -23, 0, 0, 0, 16, 110, -110, 0, 0, 0, 10, 0, 0, 0, 1, 94, -68, -6, -12, 95, 99, -46, -42, -96, 55, -36, 28, 117, -40, 107, 9, 47, -122};
 
         byte[] packetHex = {
                 0x13,
@@ -37,9 +32,9 @@ public class Test {
                 0x00,
                 0x00,
                 0x00,
-                0x0C,
-                -0x59,
-                -0x6D,
+                0x10,
+                0x6E,
+                -0x6E,
                 0x00,
                 0x00,
                 0x00,

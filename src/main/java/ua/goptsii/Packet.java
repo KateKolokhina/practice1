@@ -2,24 +2,28 @@ package ua.goptsii;
 
 import com.github.snksoft.crc.CRC;
 import com.google.common.primitives.UnsignedLong;
+import lombok.Data;
 
 import java.nio.ByteBuffer;
 
+@Data
 public class Packet {
     private Byte bMagic = 0x13;
     private Byte bSrc;
     private UnsignedLong bPktId;
+
     private Integer wLen;
     private Short wCrc16_1;
+
     private Message bMsq;
     private Short wCrc16_2;
 
     public static final int LENGTH_FIRST_PART_PACKAGE = Byte.BYTES + Byte.BYTES + Long.BYTES + Integer.BYTES;
 
-    public Packet(byte bSrc, UnsignedLong bPktId, Integer wLen, Message bMsq) {
+    public Packet(byte bSrc, UnsignedLong bPktId, Message bMsq) {
         this.bSrc = bSrc;
         this.bPktId = bPktId;
-        this.wLen = wLen;
+        this.wLen = bMsq.getTextMessageBytesLength();
         this.bMsq = bMsq;
     }
 
@@ -27,7 +31,7 @@ public class Packet {
         ByteBuffer buffer = ByteBuffer.wrap(encodedPacket);
         Byte bMagicCheck = buffer.get();
 
-        if (!bMagicCheck.equals(this.bMagic)) {
+        if (!bMagicCheck.equals(bMagic)) {
             throw new Exception("Wrong bMagic!");
         }
 
@@ -35,6 +39,8 @@ public class Packet {
         long pktId = buffer.getLong();
         bPktId = UnsignedLong.fromLongBits(pktId);
         wLen = buffer.getInt();
+
+
         ////////////////////////////////////////
         byte[] packetPartFirst = ByteBuffer.allocate(LENGTH_FIRST_PART_PACKAGE)
                 .put(bMagic)
@@ -55,20 +61,34 @@ public class Packet {
 
         int cType = buffer.getInt();
         int bUserId = buffer.getInt();
+
         byte[] messageText = new byte[wLen];
+
+        ////////////////////////////
+
         buffer.get(messageText);
+
         bMsq = new Message(cType, bUserId, new String(messageText));
+        System.out.println(bMsq.getMessage());
+
+
         byte[] packetPartSecond = ByteBuffer.allocate(packetSecondLength())
                 .put(bMsq.getMessageForPacket())
                 .array();
 
-        Short wCrc16_2Calculated =  (short) CRC.calculateCRC(CRC.Parameters.CRC16, packetPartSecond);
+        Short wCrc16_2Calculated =  (short)CRC.calculateCRC(CRC.Parameters.CRC16, packetPartSecond);
 
         wCrc16_2 = buffer.getShort();
+
         if (!wCrc16_2Calculated.equals(wCrc16_2)) {
             throw new Exception("Wrong wCrc16_2!");
         }
+        ////////////////////////////
+
         bMsq.decode();
+
+//        wLen = bMsq.getMessage().length();
+//        System.out.println(bMsq.getMessage());
     }
 
     public int packetSecondLength() {
@@ -77,7 +97,16 @@ public class Packet {
 
     public byte[] toPacket() {
         Message message = bMsq;
+
+        System.out.println(message.getMessage());
+        System.out.println("before - "+ wLen);
+
         message.encode();
+
+        wLen = message.getMessage().length();
+
+        System.out.println(message.getMessage());
+        System.out.println("after - "+ wLen);
 
         byte[] packetPartFirst = ByteBuffer.allocate(LENGTH_FIRST_PART_PACKAGE)
                 .put(bMagic)
