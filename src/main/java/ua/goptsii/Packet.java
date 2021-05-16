@@ -55,7 +55,7 @@ public class Packet {
     }
 
     public int packetSecondLength(){
-        return bMsq.lengthBytesFull();
+        return bMsq.getMessageBytesLength();
     }
     public byte[] toPacket() throws Exception{
     Message message = bMsq;

@@ -1,15 +1,23 @@
 package ua.goptsii;
 
+import lombok.Data;
+
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.ByteBuffer;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
+@Data
 public class Message {
     private Integer cType;
     private Integer bUserId;
+
+    /* easy to save message in byte array for encoding and etc. */
     private byte [] message;
+
+    public static final int BYTES_WITHOUT_MESSAGE = Integer.BYTES * 2;
+
     private Cipher cipher;
     private SecretKey secretKey;
 
@@ -29,7 +37,16 @@ public class Message {
 
     }
 
-    public String getMessageText() {
+    public byte[] getMessageForPacket(){
+
+        //ByteBuffer - easily to work with memory
+        return ByteBuffer.allocate(getMessageBytesLength())
+                .putInt(cType)
+                .putInt(bUserId)
+                .put(message).array();
+    }
+
+    public String getMessage() {
             return new String(message);
 
     }
@@ -44,18 +61,11 @@ public class Message {
         message  = cipher.doFinal(message);
     }
 
-    public int lengthBytesText(){
+    public int getTextMessageBytesLength(){
         return message.length;
     }
-    public int lengthBytesFull(){
-        return Integer.BYTES+Integer.BYTES+lengthBytesText();
-    }
 
-    public byte [] getMessageForPacket(){
-        return ByteBuffer.allocate(lengthBytesFull())
-                .putInt(cType)
-                .putInt(bUserId)
-                .put(message)
-                .array();
+    public int getMessageBytesLength() {
+        return  BYTES_WITHOUT_MESSAGE + getTextMessageBytesLength();
     }
 }
