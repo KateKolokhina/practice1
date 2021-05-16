@@ -18,22 +18,20 @@ public class Message {
 
     public static final int BYTES_WITHOUT_MESSAGE = Integer.BYTES * 2;
 
-    private Cipher cipher;
-    private SecretKey secretKey;
+//    private Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+//    private SecretKey secretKey;
 
-    public Message(int cType, int bUserId, String message){
+    public Message(int cType, int bUserId, String message) {
         this.cType = cType;
         this.bUserId = bUserId;
         this.message = message.getBytes();
-        byte[] encryptionKeyBytes = "thisisa128bitkey".getBytes();
-        secretKey = new SecretKeySpec(encryptionKeyBytes, "AES");
-        try {
-            cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+//        } catch (NoSuchAlgorithmException e) {
+//            e.printStackTrace();
+//        } catch (NoSuchPaddingException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
@@ -47,18 +45,15 @@ public class Message {
     }
 
     public String getMessage() {
-            return new String(message);
-
+        return new String(message);
     }
 
-    public void encode() throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-        message  = cipher.doFinal(message);
+    public void encode(){
+        message = MyCipher.encode(message);
     }
 
-    public void decode() throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        cipher.init(Cipher.DECRYPT_MODE, secretKey);
-        message  = cipher.doFinal(message);
+    public void decode(){
+        message = MyCipher.decode(message);
     }
 
     public int getTextMessageBytesLength(){

@@ -1,23 +1,47 @@
 package ua.goptsii;
 
-import javax.crypto.Cipher;
-import javax.crypto.NoSuchPaddingException;
+import javax.crypto.*;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 public class MyCipher {
-    private static Cipher cipher;
 
+    private static Cipher cipher;
+    private static SecretKey secretKey;
+
+    //static block of initialization
     static {
         try {
             cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             e.printStackTrace();
         }
+        byte[] encryptionKeyBytes = "thisIsA128BitKey".getBytes();
+        secretKey = new SecretKeySpec(encryptionKeyBytes, "AES");
     }
 
-    public MyCipher(){}
+    public static byte[] encode(byte[] message){
+        byte[] encodedMessage = new byte[0];
+         try {
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+             encodedMessage  = cipher.doFinal(message);
+        } catch (IllegalBlockSizeException | InvalidKeyException | BadPaddingException e) {
+            e.printStackTrace();
+        }
+        return encodedMessage;
+    }
 
+
+    public static byte[] decode(byte[] message){
+        byte[] decodedMessage = new byte[0];
+        try {
+            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+            decodedMessage  = cipher.doFinal(message);
+        } catch (IllegalBlockSizeException | InvalidKeyException | BadPaddingException e) {
+            e.printStackTrace();
+        }
+        return decodedMessage;
+    }
 
 }

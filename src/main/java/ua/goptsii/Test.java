@@ -11,23 +11,13 @@ public class Test {
 
     public static void main(String[] args) {
 
-        Message message = new Message(12, 12, "fuck");
+        Message message = new Message(12, 12, "test");
 
-        String str = "fuck";
-        System.out.println(str.length() + " "+str.getBytes().length);
+        System.out.println(message.getMessage());
+        message.encode();
+        System.out.println(message.getMessage());
+        message.decode();
+        System.out.println(message.getMessage());
 
-//        try {
-//            message.encode();
-//            System.out.println((message.getMessage()));
-//            message.decode();
-//            System.out.println((message.getMessage()));
-//
-//        } catch (InvalidKeyException e) {
-//            e.printStackTrace();
-//        } catch (BadPaddingException e) {
-//            e.printStackTrace();
-//        } catch (IllegalBlockSizeException e) {
-//            e.printStackTrace();
-//        }
     }
 }
