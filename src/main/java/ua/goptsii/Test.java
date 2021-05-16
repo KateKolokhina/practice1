@@ -16,17 +16,15 @@ public class Test {
 
         try {
             message.encode();
-            System.out.println(String.valueOf(message.getMessage()));
+            System.out.println((message.getMessage()));
             message.decode();
-            System.out.println(String.valueOf(message.getMessage()));
+            System.out.println((message.getMessage()));
 
         } catch (InvalidKeyException e) {
             e.printStackTrace();
         } catch (BadPaddingException e) {
             e.printStackTrace();
         } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
