@@ -16,13 +16,11 @@ public class Packet {
 
     public static final int LENGTH_FIRST_PART_PACKAGE = Byte.BYTES + Byte.BYTES + Long.BYTES + Integer.BYTES;
 
-    public Packet(byte bSrc, UnsignedLong bPktId, Integer wLen, short wCrc16_1, Message bMsq, short wCrc16_2) {
+    public Packet(byte bSrc, UnsignedLong bPktId, Integer wLen, Message bMsq) {
         this.bSrc = bSrc;
         this.bPktId = bPktId;
         this.wLen = wLen;
-        this.wCrc16_1 = wCrc16_1;
         this.bMsq = bMsq;
-        this.wCrc16_2 = wCrc16_2;
     }
 
     public Packet(byte[] encodedPacket) throws Exception {
@@ -37,9 +35,15 @@ public class Packet {
         long pktId = buffer.getLong();
         bPktId = UnsignedLong.fromLongBits(pktId);
         wLen = buffer.getInt();
+        ////////////////////////////////////////
+        byte[] packetPartFirst = ByteBuffer.allocate(LENGTH_FIRST_PART_PACKAGE)
+                .put(bMagic)
+                .put(bSrc)
+                .putLong(bPktId.longValue())
+                .putInt(wLen)
+                .array();
 
-        //TODO CALCULATE wCrc16_1Calculated AS WE DO IT BEFORE
-        Short wCrc16_1Calculated = 0;
+        Short wCrc16_1Calculated = (short) CRC.calculateCRC(CRC.Parameters.CRC16, packetPartFirst);
 
         wCrc16_1 = buffer.getShort();
 
@@ -54,17 +58,17 @@ public class Packet {
         byte[] messageText = new byte[wLen];
         buffer.get(messageText);
         bMsq = new Message(cType, bUserId, new String(messageText));
+        byte[] packetPartSecond = ByteBuffer.allocate(packetSecondLength())
+                .put(bMsq.getMessageForPacket())
+                .array();
 
-        bMsq.decode();
-
-        //TODO CALCULATE wCrc16_2Calculated AS WE DO IT BEFORE
-        Short wCrc16_2Calculated = 0;
+        Short wCrc16_2Calculated =  (short) CRC.calculateCRC(CRC.Parameters.CRC16, packetPartSecond);
 
         wCrc16_2 = buffer.getShort();
-
         if (!wCrc16_2Calculated.equals(wCrc16_2)) {
             throw new Exception("Wrong wCrc16_2!");
         }
+        bMsq.decode();
     }
 
     public int packetSecondLength() {
@@ -92,8 +96,7 @@ public class Packet {
         //CRC of message
         wCrc16_2 = (short) CRC.calculateCRC(CRC.Parameters.CRC16, packetPartSecond);
 
-
-        int packetLength = LENGTH_FIRST_PART_PACKAGE + Short.BYTES + packetSecondLength() + Short.BYTES;
+        int packetLength = LENGTH_FIRST_PART_PACKAGE + wCrc16_1.BYTES + packetSecondLength() + wCrc16_2.BYTES;
 
         return ByteBuffer.allocate(packetLength)
                 .put(packetPartFirst)
