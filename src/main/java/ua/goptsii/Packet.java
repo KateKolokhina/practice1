@@ -69,7 +69,7 @@ public class Packet {
         buffer.get(messageText);
 
         bMsq = new Message(cType, bUserId, new String(messageText));
-        System.out.println(bMsq.getMessage());
+//        System.out.println(bMsq.getMessage());
 
 
         byte[] packetPartSecond = ByteBuffer.allocate(packetSecondLength())
@@ -98,15 +98,15 @@ public class Packet {
     public byte[] toPacket() {
         Message message = bMsq;
 
-        System.out.println(message.getMessage());
-        System.out.println("before - "+ wLen);
+//        System.out.println(message.getMessage());
+//        System.out.println("before - "+ wLen);
 
         message.encode();
 
         wLen = message.getMessage().length();
 
-        System.out.println(message.getMessage());
-        System.out.println("after - "+ wLen);
+//        System.out.println(message.getMessage());
+//        System.out.println("after - "+ wLen);
 
         byte[] packetPartFirst = ByteBuffer.allocate(LENGTH_FIRST_PART_PACKAGE)
                 .put(bMagic)
