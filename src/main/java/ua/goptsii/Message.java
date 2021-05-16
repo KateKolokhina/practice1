@@ -18,25 +18,14 @@ public class Message {
 
     public static final int BYTES_WITHOUT_MESSAGE = Integer.BYTES * 2;
 
-//    private Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-//    private SecretKey secretKey;
 
     public Message(int cType, int bUserId, String message) {
         this.cType = cType;
         this.bUserId = bUserId;
         this.message = message.getBytes();
-//        try {
-//            cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-//        } catch (NoSuchAlgorithmException e) {
-//            e.printStackTrace();
-//        } catch (NoSuchPaddingException e) {
-//            e.printStackTrace();
-//        }
-
     }
 
     public byte[] getMessageForPacket(){
-
         //ByteBuffer - easily to work with memory
         return ByteBuffer.allocate(getMessageBytesLength())
                 .putInt(cType)
