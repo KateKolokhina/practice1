@@ -12,13 +12,11 @@ public class Test {
     public static void main(String[] args) {
 
         Message message = new Message(12, 12, "fuck");
-
-
         try {
             message.encode();
-            System.out.println((message.getMessage()));
+            System.out.println((message.getMessageText()));
             message.decode();
-            System.out.println((message.getMessage()));
+            System.out.println((message.getMessageText()));
 
         } catch (InvalidKeyException e) {
             e.printStackTrace();

@@ -2,6 +2,7 @@ package ua.goptsii;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.ByteBuffer;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
@@ -28,7 +29,7 @@ public class Message {
 
     }
 
-    public String getMessage() {
+    public String getMessageText() {
             return new String(message);
 
     }
@@ -48,5 +49,13 @@ public class Message {
     }
     public int lengthBytesFull(){
         return Integer.BYTES+Integer.BYTES+lengthBytesText();
+    }
+
+    public byte [] getMessageForPacket(){
+        return ByteBuffer.allocate(lengthBytesFull())
+                .putInt(cType)
+                .putInt(bUserId)
+                .put(message)
+                .array();
     }
 }
