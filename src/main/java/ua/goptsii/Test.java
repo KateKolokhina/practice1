@@ -14,6 +14,7 @@ public class Test {
         Message message = new Message(12, 12, "test");
 
         System.out.println(message.getMessage());
+        System.out.println(message.getMessage());
         message.encode();
         System.out.println(message.getMessage());
         message.decode();
