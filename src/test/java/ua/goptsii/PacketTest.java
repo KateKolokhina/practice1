@@ -28,8 +28,8 @@ public class PacketTest {
         Message packMessage = pack.getBMsq();
         Message pack2Message = pack2.getBMsq();
 
-        System.out.println("pack message - " + packMessage.getMessage());
-        System.out.println("pack2 message - " + pack2Message.getMessage());
+        System.out.println("pack message - " + packMessage.getMessageText());
+        System.out.println("pack2 message - " + pack2Message.getMessageText());
 
 //        Assert.assertEquals(pack.getBSrc(), pack2.getBSrc());
 //        Assert.assertEquals(pack.getBPktId(), pack2.getBPktId());
@@ -42,8 +42,8 @@ public class PacketTest {
 //        Assert.assertEquals(packMessage.getCType(), pack2Message.getCType());
 //        Assert.assertEquals(packMessage.getBUserId(), pack2Message.getBUserId());
 
-        Assert.assertEquals(TEST_MESSAGE, packMessage.getMessage());
-        Assert.assertEquals(packMessage.getMessage(), pack2Message.getMessage());
+        Assert.assertEquals(TEST_MESSAGE, new String(packMessage.getMessage()));
+        Assert.assertEquals(packMessage.getMessageText(),  pack2Message.getMessageText());
     }
 
     @Test
@@ -85,8 +85,8 @@ public class PacketTest {
 //        Assert.assertEquals(orig.getBPktId(), hex.getBPktId());
 //        Assert.assertEquals(orig.getWLen(), hex.getWLen());
 
-        System.out.println("orig message - " + originMessage.getMessage());
-        System.out.println("hex message - " + hexMessage.getMessage());
+        System.out.println("orig message - " + originMessage.getMessageText());
+        System.out.println("hex message - " + hexMessage.getMessageText());
 
         Assert.assertEquals(orig.getWCrc16_1(), hex.getWCrc16_1());
         Assert.assertEquals(orig.getWCrc16_2(), hex.getWCrc16_2());
@@ -97,7 +97,7 @@ public class PacketTest {
         Assert.assertEquals(originMessage.getCType(), hexMessage.getCType());
         Assert.assertEquals(originMessage.getBUserId(), hexMessage.getBUserId());
 
-        Assert.assertEquals(orig.getBMsq().getMessage(),hex.getBMsq().getMessage());
+        Assert.assertEquals( orig.getBMsq().getMessageText(), hex.getBMsq().getMessageText());
     }
 
     @Test

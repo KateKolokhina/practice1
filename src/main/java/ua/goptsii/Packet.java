@@ -5,6 +5,7 @@ import com.google.common.primitives.UnsignedLong;
 import lombok.Data;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 @Data
 public class Packet {
@@ -68,18 +69,15 @@ public class Packet {
 
         buffer.get(messageText);
 
-        bMsq = new Message(cType, bUserId, new String(messageText));
-//        System.out.println(bMsq.getMessage());
-
-
+        bMsq = new Message(cType, bUserId, messageText);
         byte[] packetPartSecond = ByteBuffer.allocate(packetSecondLength())
                 .put(bMsq.getMessageForPacket())
                 .array();
 
-        Short wCrc16_2Calculated =  (short)CRC.calculateCRC(CRC.Parameters.CRC16, packetPartSecond);
+        //CRC of message
+       Short wCrc16_2Calculated = (short) CRC.calculateCRC(CRC.Parameters.CRC16, packetPartSecond);
 
         wCrc16_2 = buffer.getShort();
-
         if (!wCrc16_2Calculated.equals(wCrc16_2)) {
             throw new Exception("Wrong wCrc16_2!");
         }
@@ -87,8 +85,6 @@ public class Packet {
 
         bMsq.decode();
 
-//        wLen = bMsq.getMessage().length();
-//        System.out.println(bMsq.getMessage());
     }
 
     public int packetSecondLength() {
@@ -97,16 +93,9 @@ public class Packet {
 
     public byte[] toPacket() {
         Message message = bMsq;
-
-//        System.out.println(message.getMessage());
-//        System.out.println("before - "+ wLen);
-
         message.encode();
 
-        wLen = message.getMessage().length();
-
-//        System.out.println(message.getMessage());
-//        System.out.println("after - "+ wLen);
+        wLen = message.getMessage().length;
 
         byte[] packetPartFirst = ByteBuffer.allocate(LENGTH_FIRST_PART_PACKAGE)
                 .put(bMagic)
@@ -121,7 +110,6 @@ public class Packet {
         byte[] packetPartSecond = ByteBuffer.allocate(packetSecondLength())
                 .put(bMsq.getMessageForPacket())
                 .array();
-
         //CRC of message
         wCrc16_2 = (short) CRC.calculateCRC(CRC.Parameters.CRC16, packetPartSecond);
 

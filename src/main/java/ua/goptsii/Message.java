@@ -19,6 +19,12 @@ public class Message {
     public static final int BYTES_WITHOUT_MESSAGE = Integer.BYTES * 2;
 
 
+    public Message(int cType, int bUserId, byte[] message) {
+        this.cType = cType;
+        this.bUserId = bUserId;
+        this.message = message;
+    }
+
     public Message(int cType, int bUserId, String message) {
         this.cType = cType;
         this.bUserId = bUserId;
@@ -33,8 +39,8 @@ public class Message {
                 .put(message).array();
     }
 
-    public String getMessage() {
-        return new String(message);
+    public byte[] getMessage() {
+        return message;
     }
 
     public void encode(){
@@ -51,5 +57,8 @@ public class Message {
 
     public int getMessageBytesLength() {
         return  BYTES_WITHOUT_MESSAGE + getTextMessageBytesLength();
+    }
+    public String getMessageText(){
+        return new String (getMessage());
     }
 }
